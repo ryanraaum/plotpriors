@@ -1,3 +1,7 @@
+#' @rdname geom_distribution
+#' @format NULL
+#' @usage NULL
+#' @export
 StatDistribution <- ggproto("StatDistribution", Stat,
    required_aes = character(0),
 
@@ -30,6 +34,28 @@ StatDistribution <- ggproto("StatDistribution", Stat,
    }
 )
 
+#' @param fun Function to use. A quoted or character name referencing a probability
+#' density function; see examples. Must be vectorised.
+#' @param n Number of points to interpolate along the main body of the
+#' probability density.
+#' @param args List of additional arguments passed on to the function defined by `fun`.
+#' @param xlim Optionally, restrict the range of the function to this range.
+#' @param p_limit The lower probability density limit to plot.
+#' @param location Where to shift the origin. For probability density functions
+#' that do not inherently allow for changing their location, this allows that
+#' shift.
+#' @param fill Color of fill under the curve. No fill (`NA`) by default.
+#' @param alpha Fill color transparency, if applicable.
+#' @param color Color of the line.
+#' @param size Size of the line.
+#' @section Computed variables:
+#' `stat_distribution()` computes the following variables:
+#' \describe{
+#'   \item{x}{x values along a grid where the probability density is at least `p_limit`}
+#'   \item{y}{value of the probability density function evaluated at corresponding x}
+#' }
+#' @export
+#' @rdname geom_distribution
 stat_distribution <- function (mapping = NULL, data = NULL, geom = "ribbon",
           position = "identity", ..., fun, xlim = NULL, n = 500, p_limit = 0.001,
           location = 0, fill = NA, alpha = 0.3, outline.type = "upper",
@@ -37,7 +63,7 @@ stat_distribution <- function (mapping = NULL, data = NULL, geom = "ribbon",
           show.legend = NA, inherit.aes = TRUE)
 {
   if (is.null(data)) {
-    data <- ggplot2:::ensure_nonempty_data
+    data <- ensure_nonempty_data
   }
   layer(data = data, mapping = mapping, stat = StatDistribution,
         geom = geom, position = position, show.legend = show.legend,
@@ -48,3 +74,19 @@ stat_distribution <- function (mapping = NULL, data = NULL, geom = "ribbon",
                       color = color, size = size, ...))
 }
 
+
+# This is directly from the ggplot2 stat_function.R file
+# with some changes to avoid other unexported functions
+# Included here to avoid using `:::`
+#
+# Convenience function used by `stat_function()` and
+# `geom_function()` to convert empty input data into
+# non-empty input data without touching any non-empty
+# input data that may have been provided.
+ensure_nonempty_data <- function(data) {
+  if (is.null(data) || class(data) == "waiver") {
+    data.frame(list(group = 1), n = 1)
+  } else {
+    data
+  }
+}
