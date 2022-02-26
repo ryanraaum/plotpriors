@@ -5,7 +5,7 @@
 \title{Quickly plot probability density function}
 \usage{
 plot_pdensity(
-  func,
+  fun,
   x = NULL,
   color = "skyblue",
   linetype = "solid",
@@ -20,7 +20,7 @@ plot_pdensity(
 )
 }
 \arguments{
-\item{func}{A probability density function (e.g. \code{dnorm}).}
+\item{fun}{A probability density function (e.g. \code{dnorm}).}
 
 \item{x}{(Optional) A sequence of values for the probability density
 function. If not supplied, the function will be plotted for all points

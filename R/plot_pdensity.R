@@ -1,6 +1,6 @@
 #' Quickly plot probability density function
 #'
-#' @param func A probability density function (e.g. \code{dnorm}).
+#' @param fun A probability density function (e.g. \code{dnorm}).
 #' @param x (Optional) A sequence of values for the probability density
 #' function. If not supplied, the function will be plotted for all points
 #' with probability density greater than \code{p_limit} (default 0.001)
@@ -27,29 +27,18 @@
 #' plot_pdensity(dnorm, seq(-3, 3, length.out = 100))
 #' plot_pdensity(dbeta, shape1 = 2, shape2 = 2)
 #' @export
-plot_pdensity <- function(func, x=NULL, color = "skyblue", linetype = "solid",
+plot_pdensity <- function(fun, x=NULL, color = "skyblue", linetype = "solid",
                           size = 1.5, fill = NA, alpha = 0.3, location = 0,
                           p_limit = 0.001, lower_bound = -1e4, upper_bound = 1e4,
                           ...) {
-  if(is.null(x)) {
-    x <- seq(lower_bound, upper_bound, length.out = 1e6)
-    dens <- func(x, ...)
-    if (max(dens) == 0) {
-      stop("could not find positive probability density")
-    }
-    x <- x[dens >= p_limit]
-    x <- seq(x[1], x[length(x)], length.out = 500)
-  }
-  dens <- func(x, ...)
-  dens_df <- data.frame(x = x + location, y = dens, ymin = 0)
   p <- ggplot() +
-    geom_ribbon(aes_(x = ~x, y = ~y, ymin = ~ymin, ymax = ~y),
-                data = dens_df,
-                color = color,
-                size = size,
-                fill = fill,
-                alpha = alpha,
-                outline.type = "upper") +
+    stat_distribution(fun = fun,
+                      args = list(...),
+                      color = color,
+                      size = size,
+                      fill = fill,
+                      alpha = alpha,
+                      outline.type = "upper") +
     theme(
       axis.title.y = element_blank(),
       axis.text.y = element_blank(),
