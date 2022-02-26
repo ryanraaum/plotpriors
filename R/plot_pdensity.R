@@ -9,7 +9,7 @@
 #' @param color The color of the plotted line (default "skyblue").
 #' @param linetype The linetype (default "solid").
 #' @param size The size of the line (default 1.5).
-#' @param fill The color of the fill under the line (default NULL = no fill)
+#' @param fill The color of the fill under the line (default NA = no fill)
 #' @param alpha The alpha transparency for the fill (default 0.3).
 #' @param location For probability density functions that do not have a
 #' location parameter, this will shift the center (zero) of that distribution
@@ -28,7 +28,7 @@
 #' plot_pdensity(dbeta, shape1 = 2, shape2 = 2)
 #' @export
 plot_pdensity <- function(func, x=NULL, color = "skyblue", linetype = "solid",
-                          size = 1.5, fill = NULL, alpha = 0.3, location = 0,
+                          size = 1.5, fill = NA, alpha = 0.3, location = 0,
                           p_limit = 0.001, lower_bound = -1e4, upper_bound = 1e4,
                           ...) {
   if(is.null(x)) {
@@ -43,8 +43,13 @@ plot_pdensity <- function(func, x=NULL, color = "skyblue", linetype = "solid",
   dens <- func(x, ...)
   dens_df <- data.frame(x = x + location, y = dens, ymin = 0)
   p <- ggplot() +
-    geom_line(aes_(x = ~x, y = ~y), data=dens_df,
-              color = color, linetype = linetype, size = size) +
+    geom_ribbon(aes_(x = ~x, y = ~y, ymin = ~ymin, ymax = ~y),
+                data = dens_df,
+                color = color,
+                size = size,
+                fill = fill,
+                alpha = alpha,
+                outline.type = "upper") +
     theme(
       axis.title.y = element_blank(),
       axis.text.y = element_blank(),
@@ -52,13 +57,5 @@ plot_pdensity <- function(func, x=NULL, color = "skyblue", linetype = "solid",
       axis.title.x = element_blank(),
       axis.line.y = element_blank()
     )
-  if (!is.null(fill)) {
-    p <- p + geom_ribbon(aes_(x = ~x, y = ~y, ymin = ~ymin, ymax = ~y),
-                         data = dens_df,
-                         color = NA,
-                         fill = fill,
-                         alpha = alpha
-    )
-  }
   p
 }

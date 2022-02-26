@@ -10,7 +10,7 @@ plot_pdensity(
   color = "skyblue",
   linetype = "solid",
   size = 1.5,
-  fill = NULL,
+  fill = NA,
   alpha = 0.3,
   location = 0,
   p_limit = 0.001,
@@ -34,7 +34,7 @@ between the \code{lower_bound} (default -10000) and the \code{upper_bound}
 
 \item{size}{The size of the line (default 1.5).}
 
-\item{fill}{The color of the fill under the line (default NULL = no fill)}
+\item{fill}{The color of the fill under the line (default NA = no fill)}
 
 \item{alpha}{The alpha transparency for the fill (default 0.3).}
 
